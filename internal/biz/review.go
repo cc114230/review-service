@@ -2,9 +2,8 @@ package biz
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
+	v1 "review-service/api/review/v1"
 	"review-service/internal/data/model"
 	"review-service/pkg/snowflake"
 )
@@ -32,11 +31,12 @@ func (uc *ReviewUsecase) CreateReview(ctx context.Context, review *model.ReviewI
 	// 1.参数业务校验:带业务逻辑的参数校验，比如已经评价过的订单不能再评价
 	reviews, err := uc.repo.GetReviewByOrderID(ctx, review.OrderID)
 	if err != nil {
-		return nil, errors.New("查询数据库失败")
+		return nil, v1.ErrorDbFailed("查询数据库失败")
 	}
 	if len(reviews) > 0 {
 		// 已经评价过
-		return nil, fmt.Errorf("订单:%d已评价", review.OrderID)
+
+		return nil, v1.ErrorOrderReviewed("订单:%d已评价", review.OrderID)
 	}
 	// 2.生成reviewID
 	review.ReviewID = snowflake.GenID()
