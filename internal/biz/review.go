@@ -11,6 +11,7 @@ import (
 type ReviewRepo interface {
 	SaveReview(context.Context, *model.ReviewInfo) (*model.ReviewInfo, error)
 	GetReviewByOrderID(context.Context, int64) ([]*model.ReviewInfo, error)
+	SaveReply(context.Context, *model.ReviewReplyInfo) (*model.ReviewReplyInfo, error)
 }
 
 type ReviewUsecase struct {
@@ -43,4 +44,19 @@ func (uc *ReviewUsecase) CreateReview(ctx context.Context, review *model.ReviewI
 	// 3.查询订单和商品快照信息
 	// 4.拼装数据入库
 	return uc.repo.SaveReview(ctx, review)
+}
+
+// CreateReply 创建评价回复
+func (uc *ReviewUsecase) CreateReply(ctx context.Context, param *ReplyParam) (*model.ReviewReplyInfo, error) {
+	// 调用data层创建一个评价的回复
+	uc.log.WithContext(ctx).Debugf("[biz] CreateReply param:%v", param)
+	reply := &model.ReviewReplyInfo{
+		ReplyID:   snowflake.GenID(),
+		ReviewID:  param.ReviewID,
+		StoreID:   param.StoreID,
+		Content:   param.Content,
+		PicInfo:   param.PicInfo,
+		VideoInfo: param.VideoInfo,
+	}
+	return uc.repo.SaveReply(ctx, reply)
 }

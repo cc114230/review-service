@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"review-service/internal/biz"
 	"review-service/internal/data/model"
 
@@ -55,4 +56,21 @@ func (s *ReviewService) GetReview(ctx context.Context, req *pb.GetReviewRequest)
 }
 func (s *ReviewService) ListReview(ctx context.Context, req *pb.ListReviewRequest) (*pb.ListReviewReply, error) {
 	return &pb.ListReviewReply{}, nil
+}
+
+// ReplyReview 回复评价
+func (s *ReviewService) ReplyReview(ctx context.Context, req *pb.ReplyReviewRequest) (*pb.ReplyReviewReply, error) {
+	fmt.Printf("[service] ReplyReview req:%#v\n", req)
+	// 调用biz
+	reply, err := s.uc.CreateReply(ctx, &biz.ReplyParam{
+		ReviewID:  req.GetReviewID(),
+		StoreID:   req.GetStoreID(),
+		Content:   req.GetContent(),
+		PicInfo:   req.GetPicInfo(),
+		VideoInfo: req.GetVideoInfo(),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.ReplyReviewReply{ReplyID: reply.ReplyID}, nil
 }
