@@ -36,7 +36,7 @@ func (r *ReviewRepo) SaveReply(ctx context.Context, reply *model.ReviewReplyInfo
 	// 1.已回复的评价不允许商家再次回复
 	review, err := r.data.query.ReviewInfo.
 		WithContext(ctx).
-		Where(r.data.query.ReviewInfo.ReviewID.Eq(reply.ReplyID)).
+		Where(r.data.query.ReviewInfo.ReviewID.Eq(reply.ReviewID)).
 		First()
 	if err != nil {
 		return nil, err
