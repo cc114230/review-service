@@ -2,17 +2,17 @@ package main
 
 import (
 	"flag"
-	"github.com/go-kratos/kratos/v2/registry"
 	"os"
-	"review-service/pkg/snowflake"
 
 	"review-service/internal/conf"
+	"review-service/pkg/snowflake"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
+	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 
@@ -22,7 +22,7 @@ import (
 // go build -ldflags "-X main.Version=x.y.z"
 var (
 	// Name is the name of the compiled software.
-	Name string = "review.service "
+	Name string = "review.service"
 	// Version is the version of the compiled software.
 	Version string = "v0.1"
 	// flagconf is the config flag.
@@ -46,7 +46,7 @@ func newApp(logger log.Logger, r registry.Registrar, gs *grpc.Server, hs *http.S
 			gs,
 			hs,
 		),
-		kratos.Registrar(r),
+		kratos.Registrar(r), // 服务注册
 	)
 }
 
@@ -76,7 +76,6 @@ func main() {
 	if err := c.Scan(&bc); err != nil {
 		panic(err)
 	}
-
 	// 解析registry.yaml中的配置
 	var rc conf.Registry
 	if err := c.Scan(&rc); err != nil {
@@ -88,9 +87,12 @@ func main() {
 	}
 	defer cleanup()
 
-	// 初始化雪花算法
-	if err := snowflake.Init(bc.Snowflake.StartTime,
-		bc.Snowflake.MachineId); err != nil {
+	// 初始化snowflake
+	// bc.Snowflake.StartTime
+	if err := snowflake.Init(
+		bc.Snowflake.StartTime,
+		bc.Snowflake.MachineId,
+	); err != nil {
 		panic(err)
 	}
 

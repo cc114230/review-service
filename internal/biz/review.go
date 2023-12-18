@@ -12,6 +12,8 @@ type ReviewRepo interface {
 	SaveReview(context.Context, *model.ReviewInfo) (*model.ReviewInfo, error)
 	GetReviewByOrderID(context.Context, int64) ([]*model.ReviewInfo, error)
 	SaveReply(context.Context, *model.ReviewReplyInfo) (*model.ReviewReplyInfo, error)
+	GetReview(context.Context, int64) (*model.ReviewInfo, error)
+	ListReviewByUserID(context.Context, int64) ([]*model.ReviewInfo, error)
 }
 
 type ReviewUsecase struct {
@@ -44,6 +46,17 @@ func (uc *ReviewUsecase) CreateReview(ctx context.Context, review *model.ReviewI
 	// 3.查询订单和商品快照信息
 	// 4.拼装数据入库
 	return uc.repo.SaveReview(ctx, review)
+}
+
+func (uc *ReviewUsecase) GetReview(ctx context.Context, reviewID int64) (*model.ReviewInfo, error) {
+	uc.log.WithContext(ctx).Debugf("[biz] GetReview, reviewID:%v", reviewID)
+	return uc.repo.GetReview(ctx, reviewID)
+
+}
+
+func (uc *ReviewUsecase) ListReviewByUserID(ctx context.Context, userID int64) ([]*model.ReviewInfo, error) {
+	uc.log.WithContext(ctx).Debugf("[biz] GetReview, UserID:%v", userID)
+	return uc.repo.ListReviewByUserID(ctx, userID)
 }
 
 // CreateReply 创建评价回复

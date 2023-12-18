@@ -3,33 +3,15 @@
 
 openapi: 3.0.3
 info:
-    title: ""
+    title: Review API
+    description: 定义评价服务
     version: 0.0.1
 paths:
-    /helloworld/{name}:
-        get:
-            tags:
-                - Greeter
-            description: Sends a greeting
-            operationId: Greeter_SayHello
-            parameters:
-                - name: name
-                  in: path
-                  required: true
-                  schema:
-                    type: string
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/helloworld.v1.HelloReply'
     /v1/review:
         post:
             tags:
                 - Review
-            description: 创建评价
+            description: C端创建评价
             operationId: Review_CreateReview
             requestBody:
                 content:
@@ -63,6 +45,44 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.review.v1.ReplyReviewReply'
+    /v1/review/{reviewID}:
+        get:
+            tags:
+                - Review
+            description: C端获取评价详情
+            operationId: Review_GetReview
+            parameters:
+                - name: reviewID
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.review.v1.GetReviewReply'
+    /v1/{userID}/reviews:
+        get:
+            tags:
+                - Review
+            description: C端查看userID下所有评价
+            operationId: Review_ListReviewByUserID
+            parameters:
+                - name: userID
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.review.v1.ListReviewByUserIDReply'
 components:
     schemas:
         api.review.v1.CreateReviewReply:
@@ -96,6 +116,20 @@ components:
                 anonymous:
                     type: boolean
             description: 创建评价的参数
+        api.review.v1.GetReviewReply:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/api.review.v1.ReviewInfo'
+            description: 获取评价详情的响应
+        api.review.v1.ListReviewByUserIDReply:
+            type: object
+            properties:
+                list:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.review.v1.ReviewInfo'
+            description: 用户评价列表的返回值
         api.review.v1.ReplyReviewReply:
             type: object
             properties:
@@ -116,14 +150,33 @@ components:
                 videoInfo:
                     type: string
             description: 回复评价的请求
-        helloworld.v1.HelloReply:
+        api.review.v1.ReviewInfo:
             type: object
             properties:
-                message:
+                reviewID:
                     type: string
-            description: The response message containing the greetings
+                userID:
+                    type: string
+                orderID:
+                    type: string
+                score:
+                    type: integer
+                    format: int32
+                serviceScore:
+                    type: integer
+                    format: int32
+                expressScore:
+                    type: integer
+                    format: int32
+                content:
+                    type: string
+                picInfo:
+                    type: string
+                videoInfo:
+                    type: string
+                status:
+                    type: integer
+                    format: int32
+            description: 评价信息
 tags:
-    - name: Greeter
-      description: The greeting service definition.
     - name: Review
-      description: 定义评价服务

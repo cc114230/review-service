@@ -25,6 +25,21 @@ func (r ReviewRepo) SaveReview(ctx context.Context, review *model.ReviewInfo) (*
 	return review, err
 }
 
+func (r ReviewRepo) GetReview(ctx context.Context, reviewID int64) (*model.ReviewInfo, error) {
+	return r.data.query.ReviewInfo.
+		WithContext(ctx).
+		Where(r.data.query.ReviewInfo.ReviewID.Eq(reviewID)).
+		First()
+}
+
+func (r ReviewRepo) ListReviewByUserID(ctx context.Context, userID int64) ([]*model.ReviewInfo, error) {
+	return r.data.query.ReviewInfo.
+		WithContext(ctx).
+		Where(r.data.query.ReviewInfo.UserID.Eq(userID)).
+		Order(r.data.query.ReviewInfo.ID.Desc()).
+		Find()
+}
+
 func (r ReviewRepo) GetReviewByOrderID(ctx context.Context, orderID int64) ([]*model.ReviewInfo, error) {
 	return r.data.query.ReviewInfo.
 		WithContext(ctx).
