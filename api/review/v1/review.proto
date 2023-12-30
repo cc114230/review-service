@@ -38,6 +38,14 @@ service Review {
 			body: "*"
 		};
 	};
+
+	// B端申诉用户评价
+	rpc AppealReview (AppealReviewRequest) returns (AppealReviewReply){
+		option (google.api.http) = {
+			post: "/v1/review/appeal",
+			body: "*"
+		};
+	}
 }
 
 // 创建评价的参数
@@ -81,11 +89,6 @@ message ReviewInfo{
 	int32 status = 10;
 }
 
-
-
-
-
-
 // 回复评价的请求
 message ReplyReviewRequest {
 	int64 reviewID=1 [(validate.rules).int64={gt:0}];
@@ -108,4 +111,19 @@ message ListReviewByUserIDRequest{
 // 用户评价列表的返回值
 message ListReviewByUserIDReply{
 	repeated ReviewInfo list = 1;
+}
+
+//  B端申诉评价的请求参数
+message AppealReviewRequest{
+	int64 reviewID = 1 [(validate.rules).int64 = {gt: 0}];
+	int64 storeID = 2 [(validate.rules).int64 = {gt: 0}];
+	string reason = 3 [(validate.rules).string = {min_len: 2, max_len:200}];
+	string content = 4 [(validate.rules).string = {min_len: 2, max_len:200}];
+	string picInfo = 5;
+	string videoInfo = 6;
+}
+
+// B端申诉评价的返回值
+message AppealReviewReply{
+	int64 appealID = 1;
 }

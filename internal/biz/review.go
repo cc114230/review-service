@@ -14,6 +14,7 @@ type ReviewRepo interface {
 	SaveReply(context.Context, *model.ReviewReplyInfo) (*model.ReviewReplyInfo, error)
 	GetReview(context.Context, int64) (*model.ReviewInfo, error)
 	ListReviewByUserID(context.Context, int64) ([]*model.ReviewInfo, error)
+	AppealReview(context.Context, *AppealParam) (*model.ReviewAppealInfo, error)
 }
 
 type ReviewUsecase struct {
@@ -72,4 +73,9 @@ func (uc *ReviewUsecase) CreateReply(ctx context.Context, param *ReplyParam) (*m
 		VideoInfo: param.VideoInfo,
 	}
 	return uc.repo.SaveReply(ctx, reply)
+}
+
+func (uc *ReviewUsecase) AppealReview(ctx context.Context, param *AppealParam) (*model.ReviewAppealInfo, error) {
+	uc.log.WithContext(ctx).Debugf("[biz] AppealReview param:%v", param)
+	return uc.repo.AppealReview(ctx, param)
 }

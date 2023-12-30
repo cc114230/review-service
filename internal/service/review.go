@@ -107,3 +107,19 @@ func (s *ReviewService) ReplyReview(ctx context.Context, req *pb.ReplyReviewRequ
 	}
 	return &pb.ReplyReviewReply{ReplyID: reply.ReplyID}, nil
 }
+
+func (s *ReviewService) AppealReview(ctx context.Context, req *pb.AppealReviewRequest) (*pb.AppealReviewReply, error) {
+	fmt.Printf("[service] AppealReview req:%#v\n", req)
+	ret, err := s.uc.AppealReview(ctx, &biz.AppealParam{
+		ReviewID:  req.ReviewID,
+		StoreID:   req.StoreID,
+		Reason:    req.GetReason(),
+		Content:   req.GetContent(),
+		PicInfo:   req.GetPicInfo(),
+		VideoInfo: req.GetVideoInfo(),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.AppealReviewReply{AppealID: ret.AppealID}, nil
+}
