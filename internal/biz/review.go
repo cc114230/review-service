@@ -15,6 +15,8 @@ type ReviewRepo interface {
 	GetReview(context.Context, int64) (*model.ReviewInfo, error)
 	ListReviewByUserID(context.Context, int64) ([]*model.ReviewInfo, error)
 	AppealReview(context.Context, *AppealParam) (*model.ReviewAppealInfo, error)
+	AuditReview(context.Context, *AuditParam) error
+	AuditAppeal(context.Context, *AuditAppealParam) error
 }
 
 type ReviewUsecase struct {
@@ -78,4 +80,16 @@ func (uc *ReviewUsecase) CreateReply(ctx context.Context, param *ReplyParam) (*m
 func (uc *ReviewUsecase) AppealReview(ctx context.Context, param *AppealParam) (*model.ReviewAppealInfo, error) {
 	uc.log.WithContext(ctx).Debugf("[biz] AppealReview param:%v", param)
 	return uc.repo.AppealReview(ctx, param)
+}
+
+// AuditReview 审核评价
+func (uc *ReviewUsecase) AuditReview(ctx context.Context, param *AuditParam) error {
+	uc.log.WithContext(ctx).Debugf("[biz] AuditReview param:%v", param)
+	return uc.repo.AuditReview(ctx, param)
+}
+
+// AuditAppeal 审核申诉
+func (uc ReviewUsecase) AuditAppeal(ctx context.Context, param *AuditAppealParam) error {
+	uc.log.WithContext(ctx).Debugf("[biz] AuditAppeal param:%v", param)
+	return uc.repo.AuditAppeal(ctx, param)
 }
